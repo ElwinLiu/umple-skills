@@ -1,29 +1,33 @@
-#!/usr/bin/env bash
-# Sync skills from agent/skills/ to umple-skills/
-# Run this script to update skills in the umple-skills folder
+ #!/bin/bash
+ #
+ # Sync Umple skills from this repository to ~/.agents/skills
+ #
 
-set -e
+ set -e
 
-SOURCE_DIR="$HOME/.agents/skills"
-TARGET_DIR="$(dirname "$0")"
+ # Source and destination directories
+ SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ DEST_DIR="$HOME/.agents/skills"
 
-echo "Syncing skills from $SOURCE_DIR to $TARGET_DIR"
+ # Ensure destination exists
+ mkdir -p "$DEST_DIR"
 
-for skill_dir in "$SOURCE_DIR"/*/; do
-    if [ -d "$skill_dir" ]; then
-        skill_name=$(basename "$skill_dir")
-        target_skill_dir="$TARGET_DIR/$skill_name"
+ echo "Syncing Umple skills from $SOURCE_DIR to $DEST_DIR"
+ echo "---"
 
-        echo "  → Syncing: $skill_name"
+ # Find all skill directories (those containing SKILL.md)
+ find "$SOURCE_DIR" -maxdepth 2 -type f -name "SKILL.md" | while read -r skill_file; do
+     skill_dir="$(dirname "$skill_file")"
+     skill_name="$(basename "$skill_dir")"
 
-        rm -rf "$target_skill_dir"
-        cp -r "$skill_dir" "$TARGET_DIR/"
+     echo "Syncing: $skill_name"
 
-        # If skill has .git, remove it (each skill is its own repo)
-        if [ -d "$target_skill_dir/.git" ]; then
-            rm -rf "$target_skill_dir/.git"
-        fi
-    fi
-done
+     # Use rsync to sync the skill directory
+     # -a: archive mode (preserves permissions, timestamps, etc.)
+     # -v: verbose
+     # --delete: remove files in dest that don't exist in source
+     rsync -av --delete "$skill_dir/" "$DEST_DIR/$skill_name/"
+ done
 
-echo "Done! Synced $(ls -1 "$SOURCE_DIR" | wc -l) skills to $TARGET_DIR"
+ echo "---"
+ echo "Sync complete!"
