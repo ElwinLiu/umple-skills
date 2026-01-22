@@ -173,30 +173,41 @@ function runUmple(
      args.push("-s", opt);
    }
    
-   const result = spawnSync("umple", args, {
-     encoding: "utf-8",
-     stdio: ["inherit", "pipe", "pipe"],
-   });
-   
-   const output = (result.stdout || "") + (result.stderr || "");
+  const result = spawnSync("umple", args, {
+    encoding: "utf-8",
+    stdio: ["inherit", "pipe", "pipe"],
+  });
+  
+  const outputParts = [result.stdout, result.stderr, result.error?.message].filter(
+    (value): value is string => Boolean(value && String(value).trim())
+  );
+  const output = outputParts.join("\n");
    return {
      success: result.status === 0,
-     output: output.trim(),
+    output: output.trim(),
    };
  }
  
- function findGeneratedFiles(inputPath: string): { gv: string | null; svg: string | null } {
-   const dir = path.dirname(inputPath);
-   const base = path.basename(inputPath, ".ump");
-   
-   const gvPath = path.join(dir, `${base}.gv`);
-   const svgPath = path.join(dir, `${base}.svg`);
-   
-   return {
-     gv: existsSync(gvPath) ? gvPath : null,
-     svg: existsSync(svgPath) ? svgPath : null,
-   };
- }
+function findGeneratedFiles(
+  inputPath: string,
+  diagramType: string
+): { gv: string | null; svg: string | null } {
+  const dir = path.dirname(inputPath);
+  const base = path.basename(inputPath, ".ump");
+
+  const gvCandidates = diagramType === "class-diagram"
+    ? [path.join(dir, `${base}cd.gv`), path.join(dir, `${base}.gv`)]
+    : [path.join(dir, `${base}.gv`)];
+
+  const svgCandidates = diagramType === "class-diagram"
+    ? [path.join(dir, `${base}cd.svg`), path.join(dir, `${base}.svg`)]
+    : [path.join(dir, `${base}.svg`)];
+
+  const gv = gvCandidates.find((candidate) => existsSync(candidate)) || null;
+  const svg = svgCandidates.find((candidate) => existsSync(candidate)) || null;
+
+  return { gv, svg };
+}
  
  function convertGvToSvg(gvPath: string, svgPath: string): boolean {
    try {
@@ -263,13 +274,21 @@ function generateFolderName(baseName: string | null, diagramType: string): strin
    }
  
   const generation = runUmple(inputPath, args.diagramType, args.suboptions);
-   if (!generation.success) {
-     console.error("Umple generation failed:");
-     console.error(generation.output);
-     process.exit(EXIT_CODES.VALIDATION_FAILED);
-   }
+  if (!generation.success) {
+    if (args.json) {
+      console.log(JSON.stringify({
+        success: false,
+        error: "Umple generation failed",
+        output: generation.output,
+      }, null, 2));
+    } else {
+      console.error("Umple generation failed:");
+      console.error(generation.output);
+    }
+    process.exit(EXIT_CODES.VALIDATION_FAILED);
+  }
  
-   const files = findGeneratedFiles(inputPath);
+  const files = findGeneratedFiles(inputPath, args.diagramType);
    
    if (!files.svg && files.gv) {
      const svgPath = files.gv.replace(/\.gv$/, ".svg");

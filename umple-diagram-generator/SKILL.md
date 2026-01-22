@@ -1,6 +1,6 @@
 ---
 name: umple-diagram-generator
-description: Generate UML diagrams (state machines, class diagrams, etc.) from natural-language requirements by writing Umple code and running Umple CLI.
+description: Use this skill when user asks to generate state machine or class diagram with umple.
 allowed-tools: Bash(npx -y bun:*), Bash(command -v umple:*), Bash(umple --help:*), Bash(umple:*), Bash(mktemp:*), Bash(mkdir:*), Bash(cat:*), Bash(ls:*), Bash(cp:*), Bash(command -v dot:*), Bash(dot:*), Bash(date:*)
 ---
 
@@ -150,16 +150,10 @@ Check exit code (see table above). If non-zero, read error output, fix Umple, an
 
 ## Repair loop (required)
 
-Retry up to **3** times.
-
 On each failure:
 1. Identify the root cause from script output (syntax error, unknown state, missing semicolon, etc.).
 2. Apply a focused fix to the Umple model.
 3. Re-run: `npx -y bun ${SKILL_DIR}/scripts/main.ts --input "$tmpdir/model.ump" --output <output-dir> --name "<name>" --type [state-machine|class-diagram]`
-
-If after 3 attempts it still fails, stop and:
-- Show the exact error text
-- Ask one targeted question to resolve the blocker
 
 ## Output contract
 
