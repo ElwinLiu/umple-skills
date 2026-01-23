@@ -1,6 +1,6 @@
 ---
 name: umple-diagram-generator
-description: Use this skill when user asks to generate state machine or class diagram with umple.
+description: "Generate UML diagrams (state machines, class diagrams) from natural language requirements using Umple. Use when user requests: (1) State machine diagrams (2) UML class diagrams (3) Diagram generation from text descriptions, (4) Any mention of Umple diagram generation, (5) Visual representation of states, transitions, events, classes, or relationships. Outputs SVG diagrams with organized folder structure."
 allowed-tools: Bash(npx -y bun:*), Bash(command -v umple:*), Bash(umple --help:*), Bash(umple:*), Bash(mktemp:*), Bash(mkdir:*), Bash(cat:*), Bash(ls:*), Bash(cp:*), Bash(command -v dot:*), Bash(dot:*), Bash(date:*)
 ---
 
