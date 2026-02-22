@@ -1,6 +1,6 @@
 ---
 name: umple-diagram-generator
-description: "Generate diagrams (state machines, class diagrams) from natural language requirements using Umple. Use when user requests: (1) State machine diagrams (2) UML class diagrams (3) Diagram generation from text descriptions, (4) Any mention of Umple diagram generation, (5) Visual representation of states, transitions, events, classes, or relationships. Outputs SVG diagrams with organized folder structure."
+description: "Generate diagrams (state machines, class diagrams) and source code (Java, PHP, Python) from natural language requirements using Umple. Use when user requests: (1) Visual diagrams, (2) Source code generation from models, (3) Syntax validation of Umple code, (4) Model-to-code transformation. Outputs organized folders containing models and generated artifacts."
 allowed-tools: Bash(npx -y bun:*), Bash(command -v umple:*), Bash(umple:*), Bash(mktemp:*), Bash(mkdir:*), Bash(cat:*), Bash(cp:*), Bash(command -v dot:*), Bash(dot:*), Bash(date:*)
 ---
 
@@ -8,14 +8,18 @@ allowed-tools: Bash(npx -y bun:*), Bash(command -v umple:*), Bash(umple:*), Bash
 
 ## Overview
 
-Generate an Umple `.ump` model from requirements and render it to SVG (Umple + Graphviz).
+Generate Umple `.ump` models from requirements and transform them into visual diagrams (SVG) or source code (Java, PHP, Python).
 
-## Supported diagram types
+## Supported generation types
 
-| Type            | Umple generator  | Read before writing Umple              |
-| --------------- | ---------------- | -------------------------------------- |
-| `state-machine` | `GvStateDiagram` | `references/state-machine-guidance.md` |
-| `class-diagram` | `GvClassDiagram` | `references/class-diagram-guidance.md` |
+| Type            | Umple generator  | Output artifact      | Description                               |
+| --------------- | ---------------- | -------------------- | ----------------------------------------- |
+| `state-machine` | `GvStateDiagram` | SVG Diagram          | Visual state machine representation       |
+| `class-diagram` | `GvClassDiagram` | SVG Diagram          | Visual UML class diagram representation   |
+| `java`          | `Java`           | `.java` files        | Full Java source code generation          |
+| `php`           | `Php`            | `.php` files         | Full PHP source code generation           |
+| `python`        | `Python`         | `.py` files          | Full Python source code generation        |
+| `validate`      | `None`           | Console Output       | Syntax check only (use for self-repair)   |
 
 ## Script
 
