@@ -8,15 +8,6 @@ Before contributing, make sure you understand the basic idea of Skills:
 
 If you are unsure about any point in these best practices, ask your agent to read the linked docs and explain how the guidance applies to your change.
 
-## How to contribute
-
-You can contribute by:
-- Reporting bugs or unclear behavior
-- Improving skill prompts and references
-- Fixing scripts and tooling
-- Adding new Umple-focused skills
-- Improving docs and examples
-
 ## Prerequisites and installation
 
 ### Install the skills package
