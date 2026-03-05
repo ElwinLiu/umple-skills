@@ -269,42 +269,54 @@ function generateFolderName(baseName: string | null, diagramType: string): strin
     process.exit(EXIT_CODES.VALIDATION_FAILED);
   }
 
+
   const deps = checkDependencies();
+  const isVisualDiagram = ["state-machine", "class-diagram"].includes(args.diagramType);
+
   if (!deps.umple) {
     console.error("Error: umple CLI not found.");
     process.exit(EXIT_CODES.MISSING_DEPS);
   }
 
+  if (isVisualDiagram && !deps.dot) {
+    console.error("Error: Graphviz (dot) is required for visual diagrams.");
+    process.exit(EXIT_CODES.MISSING_DEPS);
+  }
+
   const generation = runUmple(inputPath, args.diagramType, args.suboptions);
-  
+
   if (args.diagramType === "validate") {
-    if (generation.success) {
-      console.log("Validation Success: The Umple code is perfectly valid.");
-      process.exit(EXIT_CODES.SUCCESS);
+    if (args.json) {
+      console.log(JSON.stringify({
+        success: generation.success,
+        output: generation.output,
+        type: "validate"
+      }, null, 2));
     } else {
-      console.error("Validation Failed:");
-      console.error(generation.output);
-      process.exit(EXIT_CODES.VALIDATION_FAILED);
+      console.log(generation.success ? "Validation Success: Code is valid." : "Validation Failed:\n" + generation.output);
     }
+    process.exit(generation.success ? 0 : 2);
   }
 
   if (!generation.success) {
-    console.error("Umple generation failed:");
-    console.error(generation.output);
+    if (args.json) {
+      console.log(JSON.stringify({ success: false, error: "Generation failed", output: generation.output }, null, 2));
+    } else {
+      console.error("Umple generation failed:\n" + generation.output);
+    }
     process.exit(EXIT_CODES.VALIDATION_FAILED);
   }
 
   let files = findGeneratedFiles(inputPath, args.diagramType);
-  if (!files.svg && files.gv) {
+  if (isVisualDiagram && !files.svg && files.gv) {
     const svgPath = files.gv.replace(/\.gv$/, ".svg");
     if (convertGvToSvg(files.gv, svgPath)) {
       files.svg = svgPath;
     }
   }
 
-  const isVisualDiagram = ["state-machine", "class-diagram"].includes(args.diagramType);
   if (isVisualDiagram && !files.svg) {
-    console.error("Error: SVG file was not generated for the diagram");
+    console.error("Error: SVG file was not generated");
     process.exit(EXIT_CODES.SVG_GENERATION_FAILED);
   }
 
@@ -313,37 +325,42 @@ function generateFolderName(baseName: string | null, diagramType: string): strin
   const useFolderMode = args.outputName !== null || !isExactPath;
 
   if (useFolderMode && !isExactPath) {
-    const outputDir = path.join(outputPath, generateFolderName(args.outputName, args.diagramType));
+    const folderName = generateFolderName(args.outputName, args.diagramType);
+    const outputDir = path.join(outputPath, folderName);
     mkdirSync(outputDir, { recursive: true });
 
     copyFileSync(inputPath, path.join(outputDir, path.basename(inputPath)));
-
     if (files.svg) copyFileSync(files.svg, path.join(outputDir, path.basename(files.svg)));
     if (files.gv) copyFileSync(files.gv, path.join(outputDir, path.basename(files.gv)));
 
     if (!isVisualDiagram) {
       const sourceDir = path.dirname(inputPath);
-      const generatedFiles = readdirSync(sourceDir).filter(f => 
-        f.endsWith(".java") || f.endsWith(".php") || f.endsWith(".py") || f.endsWith(".cpp")
-      );
-      for (const f of generatedFiles) {
-        copyFileSync(path.join(sourceDir, f), path.join(outputDir, f));
-      }
+      readdirSync(sourceDir).forEach(f => {
+        if (f.endsWith(".java") || f.endsWith(".php") || f.endsWith(".py") || f.endsWith(".cpp")) {
+          copyFileSync(path.join(sourceDir, f), path.join(outputDir, f));
+        }
+      });
     }
 
-    console.log(`Success: Files generated in ${outputDir}`);
+    if (args.json) {
+      console.log(JSON.stringify({ success: true, mode: "folder", outputDir, type: args.diagramType }, null, 2));
+    } else {
+      console.log(`Success: Files generated in ${outputDir}`);
+    }
 
   } else {
     if (files.svg) {
       mkdirSync(path.dirname(outputPath), { recursive: true });
       copyFileSync(files.svg, outputPath);
-      console.log(outputPath);
-    } else {
-      console.log("Success: Generation complete (No SVG output for this type)");
+      if (args.json) {
+        console.log(JSON.stringify({ success: true, mode: "exact", outputPath }, null, 2));
+      } else {
+        console.log(outputPath);
+      }
     }
   }
 
   process.exit(EXIT_CODES.SUCCESS);
 }
- 
+
  main();
