@@ -18,31 +18,6 @@ Use this exact command:
 npx skills add umple/umple-skills
 ```
 
-### Install required tools
-
-Install the runtime tools used by this repository:
-
-- **Umple CLI**
-  - Source (all platforms): https://cruise.umple.org/umpleonline/download_umple.shtml
-- **Graphviz** (`dot`)
-  - macOS (Homebrew): `brew install graphviz`
-  - Ubuntu/Debian: `sudo apt-get update && sudo apt-get install -y graphviz`
-  - Windows source/packages: https://graphviz.org/download/
-- **Bun** (used through `npx -y bun`)
-  - macOS/Linux: `curl -fsSL https://bun.sh/install | bash`
-  - Windows source/packages: https://bun.sh/docs/installation
-- **Node.js / npx**
-  - Source/packages (including Windows): https://nodejs.org/en/download
-
-Quick verification:
-
-```bash
-umple -h
-dot -V
-bun --version
-npx --version
-```
-
 ## Local setup
 
 ```bash
@@ -68,7 +43,6 @@ umple-skills/
 ├── assets/
 └── <skill-name>/
     ├── SKILL.md
-    ├── scripts/
     └── references/
 ```
 

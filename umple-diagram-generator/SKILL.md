@@ -1,126 +1,79 @@
 ---
 name: umple-diagram-generator
-description: "Generate diagrams (state machines, class diagrams) from natural language requirements using Umple. Use when user requests: (1) State machine diagrams (2) UML class diagrams (3) Diagram generation from text descriptions, (4) Any mention of Umple diagram generation, (5) Visual representation of states, transitions, events, classes, or relationships. Outputs SVG diagrams with organized folder structure."
-allowed-tools: Bash(npx -y bun:*), Bash(command -v umple:*), Bash(umple:*), Bash(mktemp:*), Bash(mkdir:*), Bash(cat:*), Bash(cp:*), Bash(command -v dot:*), Bash(dot:*), Bash(date:*)
+description: "Generate diagrams (state machines, class diagrams, ER diagrams) from natural language requirements using Umple. Uses the Umple Online API — no local installs needed. Use when user requests: (1) State machine diagrams (2) UML class diagrams (3) ER diagrams (4) Diagram generation from text descriptions, (5) Any mention of Umple diagram generation, (6) Visual representation of states, transitions, events, classes, or relationships. Outputs SVG diagrams."
 ---
 
-# Umple Diagram Generator Skill
+# Umple Diagram Generator
 
-## Overview
-
-Generate an Umple `.ump` model from requirements and render it to SVG (Umple + Graphviz).
+Generate an Umple `.ump` model from requirements and render it to SVG via the Umple Online API. No local dependencies required.
 
 ## Supported diagram types
 
-| Type            | Umple generator  | Read before writing Umple              |
-| --------------- | ---------------- | -------------------------------------- |
-| `state-machine` | `GvStateDiagram` | `references/state-machine-guidance.md` |
-| `class-diagram` | `GvClassDiagram` | `references/class-diagram-guidance.md` |
-
-## Script
-
-Entry point: `scripts/main.ts` (run with Bun via `npx -y bun`).
-
-## Quick start
-
-```bash
-# Folder mode: organized output with all files (.ump, .gv, .svg)
-npx -y bun ${SKILL_DIR}/scripts/main.ts --input model.ump --output ./diagrams --name "light-controller"
-
-# Exact path mode: save SVG to specific file path
-npx -y bun ${SKILL_DIR}/scripts/main.ts --input model.ump --output ./my-diagram.svg
-
-# Class diagram with custom name
-npx -y bun ${SKILL_DIR}/scripts/main.ts --input model.ump --output ./diagrams --name "user-system" --type class-diagram
-```
-
-Replace `${SKILL_DIR}` with the absolute path to this skill directory.
-
-### Script options
-
-| Option                  | Description                                                                      |
-| ----------------------- | -------------------------------------------------------------------------------- |
-| `-i, --input <path>`    | Input `.ump` file (required)                                                     |
-| `-o, --output <path>`   | Output path: directory for folder mode, or `.svg` file for exact path (required) |
-| `-n, --name <name>`     | Diagram name for folder mode (optional, triggers folder mode)                    |
-| `-t, --type <type>`     | Diagram type: `state-machine` (default), `class-diagram`                         |
-| `-s, --suboption <opt>` | GvStateDiagram suboption (repeatable)                                            |
-| `--json`                | JSON output with details                                                         |
-| `-h, --help`            | Show help                                                                        |
-
-### Output modes
-
-**Folder Mode** (when `--name` is specified or `--output` is a directory):
-
-- Creates organized folder with timestamped name
-- Includes all files: `.ump` (source), `.gv` (graphviz), `.svg` (diagram)
-
-**Folder naming**:
-
-- With `--name`: `<sanitized-name>_<timestamp>/`
-- Without `--name`: `<diagram-type>_<timestamp>/`
-
-**Example**:
-
-```
-diagrams/
-└── light-controller_20260121_183045/
-    ├── model.ump
-    ├── model.gv
-    └── model.svg
-```
-
-**Exact Path Mode** (when `--output` ends with `.svg`):
-
-- Saves only the SVG file to the exact specified path
-- Useful when user specifies a specific output location
-
-**Example**:
-
-```bash
-npx -y bun ${SKILL_DIR}/scripts/main.ts --input model.ump --output /path/to/my-diagram.svg
-# Result: /path/to/my-diagram.svg (only SVG, no folder created)
-```
-
-### Exit codes
-
-| Code | Meaning                                           |
-| ---- | ------------------------------------------------- |
-| 0    | Success                                           |
-| 1    | Missing dependencies (umple or dot)               |
-| 2    | Umple validation/compilation failed               |
-| 3    | SVG generation failed or unsupported diagram type |
+| Type             | API `language` value          | Read before writing Umple              |
+| ---------------- | ----------------------------- | -------------------------------------- |
+| State machine    | `stateDiagram`                | `references/state-machine-guidance.md` |
+| Class diagram    | `classDiagram`                | `references/class-diagram-guidance.md` |
+| Trait diagram    | `traitDiagram`                | `references/class-diagram-guidance.md` |
+| ER diagram       | `entityRelationshipDiagram`   | `references/class-diagram-guidance.md` |
 
 ## Workflow
 
-1. Pre-flight: verify deps
-   - `command -v umple`
-   - `command -v dot`
-     If missing, stop and ask the user to install them.
-2. Clarify only what you must
-   - State machine: initial state, events, finals, guards/actions
+1. Read the relevant reference file for the diagram type (see table above).
+2. Clarify only what you must:
+   - State machine: initial state, events, transitions, guards/actions
    - Class diagram: entities, attributes, relationships, multiplicities
-3. Write Umple
-   - Read the relevant guidance file (table above) before writing.
-4. Render
-   - Prefer folder mode unless the user explicitly provides an `.svg` output path.
-5. Validate
-   - On failure: fix Umple and retry up to 3 times.
+3. Write valid Umple code based on the guidance.
+4. Call the Umple Online API (see below) to compile and generate the diagram.
+5. Extract the SVG from the response.
+6. If compilation fails, read the error, fix the Umple code, and retry (up to 3 times).
+7. Render the SVG diagram inline for the user. Display it visually — do not just describe it.
 
-## Repair loop
+## Umple Online API
 
-If rendering fails: read script output, apply a focused fix, re-run the same command.
+### Endpoint
+
+```
+POST https://cruise.umple.org/umpleonline/scripts/compiler.php
+Content-Type: application/x-www-form-urlencoded
+```
+
+### Parameters (form-encoded body)
+
+| Parameter       | Value                                                                              |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `language`      | One of: `classDiagram`, `stateDiagram`, `traitDiagram`, `entityRelationshipDiagram` |
+| `languageStyle` | `diagramUpdate`                                                                     |
+| `error`         | `true`                                                                              |
+| `umpleCode`     | The Umple source code                                                               |
+| `filename`      | `model.ump`                                                                         |
+
+### Example
+
+To generate a class diagram for `class Student { String name; Integer id; }`:
+
+```
+POST https://cruise.umple.org/umpleonline/scripts/compiler.php
+
+language=classDiagram&languageStyle=diagramUpdate&error=true&umpleCode=class+Student+%7B+String+name%3B+Integer+id%3B+%7D&filename=model.ump
+```
+
+### Response handling
+
+The API returns HTML containing an embedded SVG diagram.
+
+1. **Check for errors**: If the response contains `<p>URL_SPLIT`, everything before that marker may contain warnings/errors. Strip HTML tags to read them.
+2. **Extract SVG**: Find the `<svg ... viewBox="...">...</svg>` block in the response. This is the diagram.
+3. **Clean up**: Remove any `transform="scale(...) rotate(0)"` attributes, replacing with just `transform="rotate(0)"` for proper rendering.
+4. **Error case**: If no `<svg` tag is found, the compilation failed. The response text (with HTML stripped) contains the error message.
 
 ## Output contract
 
-1. Diagram type
-2. Generated Umple (single `umple` block)
-3. Exact command run
-4. Output paths (folder + SVG, or exact SVG path)
+1. State the diagram type generated.
+2. Show the Umple source code in an `umple` code block.
+3. Render the SVG diagram visually for the user.
 
 ## Guardrails
 
 - Prefer a smaller valid Umple model over guessing syntax.
-- Use exact path mode only when the user provides an `.svg` path.
-- Do not install system dependencies.
+- Always read the reference file before writing Umple code.
 - Keep actions/guards minimal (no secrets, no I/O).
