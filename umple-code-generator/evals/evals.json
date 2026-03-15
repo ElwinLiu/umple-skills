@@ -1,0 +1,150 @@
+{
+  "skill_name": "umple-code-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate Java code for a Person class with an immutable String id, a String name, and a key on id. The class should enforce immutability on the id field.",
+      "expected_output": "Java source code for a Person class with constructor taking id and name, getter for id (no setter), getter and setter for name, and equals/hashCode based on the id key.",
+      "expectations": [
+        "The Umple source contains 'class Person' with 'immutable String id' and 'String name' attributes",
+        "The Umple source contains 'key { id }' to define the primary key",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated Java code contains 'getId()' method but no 'setId()' method (immutable)",
+        "The generated Java code contains both 'getName()' and 'setName(' methods",
+        "The generated output uses '//%% NEW FILE' separators or is saved as a .java file",
+        "A model.ump file was saved containing the Umple source code"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate Java code for an online store domain model. An Order has an orderDate and a status. A Customer has a name and email. A Product has a name and price. An Order belongs to one Customer (a Customer can have many Orders). An Order contains many Products (many-to-many).",
+      "expected_output": "Java source code for Customer, Order, and Product classes with association management methods, constructors, and proper multiplicity enforcement.",
+      "expectations": [
+        "The Umple source contains 'class Order', 'class Customer', and 'class Product'",
+        "The Umple source contains a one-to-many association between Customer and Order",
+        "The Umple source contains a many-to-many association between Order and Product",
+        "Each class pair has at most one association defined (no duplicate associations)",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated output contains multiple '//%% NEW FILE' separators (one per class)",
+        "The generated code contains association management methods like 'addProduct' or 'addOrder'"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Generate Python code for a Student class with a name, studentNumber, and a GPA (Double). Include a lazy email attribute that is not required at construction time.",
+      "expected_output": "Python source code for a Student class with constructor, getters/setters, and a lazy email attribute.",
+      "expectations": [
+        "The Umple source contains 'class Student' with 'name', 'studentNumber', and a GPA attribute (Double type)",
+        "The Umple source contains 'lazy' keyword for the email attribute",
+        "The API was called with language set to 'Python' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated Python code contains a class definition with 'class Student' or 'class Student:'",
+        "The generated code contains '__init__' method or constructor that does not include email as a required parameter"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Generate SQL DDL for a school database. A Student has a studentId (unique), name, and email. A Course has a courseId (unique), title, and credits. Students enroll in Courses (many-to-many). Generate the CREATE TABLE statements including foreign keys and join tables.",
+      "expected_output": "SQL DDL with CREATE TABLE statements for Student, Course, and a join table for the many-to-many enrollment relationship, including PRIMARY KEY and FOREIGN KEY constraints.",
+      "expectations": [
+        "The Umple source contains 'class Student' with 'studentId', 'name', and 'email' attributes",
+        "The Umple source contains 'class Course' with 'courseId', 'title', and 'credits' attributes",
+        "The Umple source contains a many-to-many association between Student and Course",
+        "The API was called with language set to 'Sql' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated SQL contains 'CREATE TABLE' statements",
+        "The generated SQL contains 'PRIMARY KEY' constraints",
+        "The generated SQL contains 'FOREIGN KEY' constraints or a join table for the many-to-many relationship"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Generate Java code for a TrafficLight class with a state machine. The light has three states: Green, Yellow, Red. It cycles through them: Green -> (timer) -> Yellow -> (timer) -> Red -> (timer) -> Green. Include entry actions that log the current state.",
+      "expected_output": "Java source code for TrafficLight with a state machine enum, event methods for transitions, and entry action code.",
+      "expectations": [
+        "The Umple source contains 'class TrafficLight' with a state machine",
+        "The state machine has states Green, Yellow, and Red",
+        "The state machine has transitions forming a cycle: Green -> Yellow -> Red -> Green",
+        "The Umple source contains entry actions using 'entry /' syntax",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated Java code contains an enum or state-related constants for Green, Yellow, Red",
+        "The generated Java code contains method(s) for triggering state transitions"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Generate both Java and PHP code from the same Umple model. The model has a BankAccount class with an accountNumber (immutable String), a balance (Double, default 0.0), and methods for deposit and withdraw. Generate Java first, then PHP from the same model.",
+      "expected_output": "Both Java and PHP source code files generated from the same BankAccount Umple model, demonstrating multi-language generation.",
+      "expectations": [
+        "The Umple source contains 'class BankAccount' with 'immutable String accountNumber' and 'balance' attributes",
+        "The API was called once with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API was called once with language set to 'Php' and languageStyle set to 'codegen'",
+        "Neither API response contains 'umple-message-error'",
+        "The generated Java output contains a BankAccount.java file or class definition",
+        "The generated PHP output contains a BankAccount.php file or class definition",
+        "Both outputs were generated from the same Umple model (same model.ump file)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Generate Java code for a School with Teachers and Students. A School has many Teachers and many Students. Be careful: define each association only once. Do NOT define the School-Teacher relationship in both the School class and the Teacher class.",
+      "expected_output": "Java source code for School, Teacher, and Student classes where each association is defined exactly once, avoiding the Umple duplicate association error.",
+      "expectations": [
+        "The Umple source contains 'class School', 'class Teacher', and 'class Student'",
+        "The School-Teacher association is defined exactly once (not from both sides)",
+        "The School-Student association is defined exactly once (not from both sides)",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated output contains '//%% NEW FILE' separators for multiple classes",
+        "The generated code contains association management methods (e.g., 'addTeacher', 'addStudent')"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Generate Java code for an Employee class where an Employee can manage other Employees (reflexive one-to-many). Each Employee has a name. The manager association must use a role name to compile correctly.",
+      "expected_output": "Java source code for an Employee class with a reflexive association using a role name like 'manager', compiling without errors.",
+      "expectations": [
+        "The Umple source contains 'class Employee' with a 'name' attribute",
+        "The Umple source contains a reflexive association (Employee to Employee) with a role name such as 'manager'",
+        "The reflexive association uses proper syntax: '* -- 0..1 Employee manager' or similar with a role name",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated Java code contains 'getManager()' or similar method for the role-named end",
+        "The generated Java code contains methods for managing the many-side of the reflexive association (e.g., 'getEmployees()' or 'addEmployee(')"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Generate Java code for a Workflow with a state machine. States: Draft, Review, Approved, Rejected, Archived. Important: do NOT name any state 'Final' since that is a reserved word in Umple. Archived should be modeled as a named final state using 'final Archived {}'.",
+      "expected_output": "Java source code for a Workflow class with a state machine that avoids the reserved 'Final' state name and correctly uses a named final state for Archived.",
+      "expectations": [
+        "The Umple source contains 'class Workflow' with a state machine",
+        "The state machine has states Draft, Review, Approved, and Rejected",
+        "The state machine does NOT contain a state literally named 'Final' (reserved word)",
+        "The state machine uses 'final Archived' syntax for the terminal state",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated Java code contains an enum or constants for the workflow states",
+        "The generated Java code contains event methods for triggering transitions between states"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Generate Java code using traits and enumerations. Define an enum Priority with LOW, MEDIUM, HIGH. Define a trait Timestamped with createdAt and updatedAt (Date) attributes. Create a Task class that uses the Timestamped trait and has a title, description, and Priority attribute.",
+      "expected_output": "Java source code for a Task class that incorporates the Timestamped trait's attributes and uses the Priority enumeration.",
+      "expectations": [
+        "The Umple source contains 'enum Priority' with values LOW, MEDIUM, HIGH",
+        "The Umple source contains 'trait Timestamped' with 'createdAt' and 'updatedAt' attributes",
+        "The Umple source contains 'class Task' with 'isA Timestamped'",
+        "The Task class has 'title', 'description', and 'Priority' attributes",
+        "The API was called with language set to 'Java' and languageStyle set to 'codegen'",
+        "The API response does not contain 'umple-message-error'",
+        "The generated Java code contains the Task class with getter/setter methods for createdAt and updatedAt (from the trait)",
+        "The generated Java code contains a Priority enum definition or reference"
+      ]
+    }
+  ]
+}

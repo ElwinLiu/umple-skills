@@ -1,0 +1,291 @@
+{
+  "skill_name": "umple-diagram-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a class diagram for a library system where an Author has a name and can write many Books. A Book has a title, ISBN, and year. Authors and Books have a many-to-many relationship.",
+      "expected_output": "A class diagram SVG showing Author and Book classes with attributes and a many-to-many association. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Author' with a 'name' attribute",
+        "The Umple source contains 'class Book' with 'title', 'isbn' (or 'ISBN'), and 'year' attributes",
+        "The Umple source contains a many-to-many association between Author and Book using '* -- *' or equivalent multiplicity",
+        "The association between Author and Book is defined only once (not duplicated from both sides)",
+        "The API was called with language set to 'classDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute",
+        "A model.ump file was saved containing the Umple source code"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a class diagram for a hotel booking system. A Hotel has a name, address, and starRating. A Room has a roomNumber and pricePerNight. A Guest has a name, email, and phone. A Booking ties a Guest to a Room with checkIn and checkOut dates. A Hotel has many Rooms (composition). A Guest can have many Bookings.",
+      "expected_output": "A class diagram SVG showing Hotel, Room, Guest, and Booking classes with appropriate associations including composition between Hotel and Room. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Hotel' with 'name', 'address', and 'starRating' attributes",
+        "The Umple source contains 'class Room' with 'roomNumber' and 'pricePerNight' attributes",
+        "The Umple source contains 'class Guest' with 'name', 'email', and 'phone' attributes",
+        "The Umple source contains 'class Booking' with 'checkIn' and 'checkOut' attributes",
+        "The Umple source uses composition ('<@>-') for the Hotel-Room relationship",
+        "Each class pair has at most one association defined between them",
+        "The API was called with language set to 'classDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create a class diagram showing an inheritance hierarchy: an abstract class Shape with an abstract method area(). Circle (with radius) and Rectangle (with width and height) extend Shape. Both implement a Drawable interface that declares a draw() method.",
+      "expected_output": "A class diagram SVG showing Shape as abstract, Circle and Rectangle inheriting from it, and both implementing Drawable interface. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Shape' with the 'abstract' keyword",
+        "The Umple source contains 'class Circle' with a 'radius' attribute and 'isA Shape'",
+        "The Umple source contains 'class Rectangle' with 'width' and 'height' attributes and 'isA Shape'",
+        "The Umple source contains 'interface Drawable' with a 'draw' method declaration",
+        "Circle and Rectangle both contain 'isA Drawable' to implement the interface",
+        "The API was called with language set to 'classDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a class diagram for a vehicle fleet system. A Fleet owns multiple Vehicles (composition). A Vehicle has a licensePlate. An Employee has a name and can manage zero or one other Employee (reflexive manager relationship). A Fleet has many Events sorted by eventDate.",
+      "expected_output": "A class diagram SVG showing Fleet, Vehicle, Employee, and Event classes with composition, reflexive association, and sorted association. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Fleet'",
+        "The Umple source contains 'class Vehicle' with a 'licensePlate' attribute",
+        "The Umple source uses composition ('<@>-') between Fleet and Vehicle",
+        "The Umple source contains 'class Employee' with a reflexive association using a role name (e.g., 'manager')",
+        "The Umple source contains 'class Event' with an 'eventDate' attribute",
+        "The Umple source contains a sorted association using 'sorted { eventDate }' or similar",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Create a class diagram using an association class. Students enroll in Courses. The Enrollment association class stores the grade and semester for each student-course pairing.",
+      "expected_output": "A class diagram SVG showing Student, Course, and Enrollment as an association class. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Student'",
+        "The Umple source contains 'class Course'",
+        "The Umple source contains 'associationClass Enrollment' (not a regular class)",
+        "The Enrollment association class has 'grade' and 'semester' attributes",
+        "The Enrollment association class references both Student and Course with multiplicity markers",
+        "The API was called with language set to 'classDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Create a state machine diagram for a simple light switch. The light can be On or Off. The event 'toggle' switches between states.",
+      "expected_output": "A state machine diagram SVG showing On and Off states with toggle transitions between them. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains a class with a state machine",
+        "The state machine has an 'On' state and an 'Off' state",
+        "The state machine has a 'toggle' event (or similar switching event) that transitions between On and Off",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute",
+        "A model.ump file was saved containing the Umple source code"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Create a state machine diagram for a driver's license lifecycle. States: Applied, Written Test, Road Test, Licensed, Expired, Suspended. An applicant starts at Applied, passes a written test to go to Written Test, passes a road test from Written Test to Licensed. A Licensed license can expire (-> Expired) or be suspended (-> Suspended). An Expired license can be renewed (-> Licensed). A Suspended license can be reinstated (-> Licensed).",
+      "expected_output": "A state machine diagram SVG showing the full driver's license lifecycle with all states and transitions. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains a state machine with states for Applied, WrittenTest (or similar), RoadTest (or similar), Licensed, Expired, and Suspended",
+        "There is a transition from the Applied state to WrittenTest triggered by an event like 'passWritten'",
+        "There is a transition from Licensed to Expired and from Licensed to Suspended",
+        "There is a transition from Expired back to Licensed (renewal)",
+        "There is a transition from Suspended back to Licensed (reinstatement)",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Create a state machine diagram for a Blackjack card game. States: Betting, Dealing, PlayerTurn, DealerTurn, PlayerBust, DealerBust, PlayerWins, DealerWins, Push (tie). The game starts at Betting. After placing a bet, cards are dealt. During PlayerTurn, the player can hit or stand. If they bust, go to PlayerBust. If they stand, the dealer plays. The dealer can bust (DealerBust -> PlayerWins) or not. Compare hands to determine PlayerWins, DealerWins, or Push.",
+      "expected_output": "A state machine diagram SVG showing the Blackjack game flow with branching outcomes. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains states for Betting, Dealing (or similar), and PlayerTurn",
+        "The Umple source contains states for DealerTurn and outcome states like PlayerBust, PlayerWins, DealerWins",
+        "There are transitions from PlayerTurn for 'hit' (staying in PlayerTurn or going to PlayerBust) and 'stand' (going to DealerTurn)",
+        "The state machine includes at least one guard condition (e.g., for busting or comparing hands)",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Create a state machine diagram for a credit card application process. States: Submitted, UnderReview, Approved, Denied, Active, Frozen, Cancelled. Application starts at Submitted, moves to UnderReview, then either Approved or Denied. Approved moves to Active. Active can be Frozen (and unfrozen back to Active) or Cancelled. Denied and Cancelled are final states.",
+      "expected_output": "A state machine diagram SVG showing the credit card lifecycle with approval process and final states. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains states for Submitted, UnderReview, Approved, and Denied",
+        "The Umple source contains states for Active, Frozen, and Cancelled",
+        "There are transitions from UnderReview to both Approved and Denied",
+        "There is a bidirectional flow between Active and Frozen (freeze and unfreeze events)",
+        "Denied and Cancelled are modeled as final states or terminal states with no outgoing transitions",
+        "The state machine does not use 'Final' as a state name (reserved word in Umple)",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Create a state machine diagram for an AI agent loop. States: Idle, ReceivingInput, Thinking, ToolCall, AwaitingResult, Formatting, Responding, Error. The agent starts Idle, receives input, thinks about what to do, optionally makes tool calls (ToolCall -> AwaitingResult -> Thinking cycle), then formats and responds. Any state can transition to Error on failure. Error can retry back to Thinking.",
+      "expected_output": "A state machine diagram SVG showing the AI agent loop with the tool call cycle and error handling. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains states for Idle, ReceivingInput (or similar), Thinking, and ToolCall",
+        "The Umple source contains states for AwaitingResult, Formatting (or similar), Responding, and Error",
+        "There is a cycle: ToolCall -> AwaitingResult -> Thinking to model iterative tool use",
+        "There is a transition from Error back to Thinking (retry capability)",
+        "Multiple states can transition to the Error state",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Create a state machine diagram with nested states. A machine has an Operating parent state containing Phase1, Phase2, and Phase3 substates. Transitions go from Phase1 -> Phase2 -> Phase3 sequentially. The Operating state has an 'emergency' transition to a Halted state from any substate. Halted can reset back to Operating.",
+      "expected_output": "A state machine diagram SVG showing nested states within Operating and a parent-level emergency transition. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains a parent state 'Operating' with nested substates Phase1, Phase2, and Phase3",
+        "There are sequential transitions: Phase1 -> Phase2 -> Phase3",
+        "There is an 'emergency' transition defined at the Operating level (inherited by all substates)",
+        "There is a Halted state with a 'reset' transition back to Operating",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Create a state machine diagram for an automatic door. The door starts Closed. After a sensor detects someone (detect event), it transitions to Opening. After 2 seconds (timed transition), it moves to Open. While Open, it uses afterEvery(1) to check a sensor. If no one is detected for 5 seconds (after(5)), it goes to Closing. Closing transitions to Closed after 2 seconds.",
+      "expected_output": "A state machine diagram SVG showing timed transitions with after() and afterEvery(). The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains states for Closed, Opening, Open, and Closing",
+        "The Umple source uses 'after(' for at least one timed transition",
+        "The Umple source uses 'afterEvery(' for a periodic check or action",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Create a state machine diagram with concurrent regions. A Robot has an Active state with two concurrent regions separated by ||. Region 1 (Movement) has states Moving and Stopped. Region 2 (Sensor) has states Scanning and Idle. Each region operates independently.",
+      "expected_output": "A state machine diagram SVG showing concurrent regions using the || separator. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains an Active (or similar parent) state with concurrent regions",
+        "The Umple source uses '||' to separate concurrent regions",
+        "One region contains Movement-related states (Moving, Stopped or similar)",
+        "Another region contains Sensor-related states (Scanning, Idle or similar)",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Create an entity-relationship diagram for a university database. Entities: Student (studentId, name, email), Course (courseId, title, credits), Professor (profId, name, department). Students enroll in Courses (many-to-many). Professors teach Courses (one-to-many).",
+      "expected_output": "An ER diagram SVG showing Student, Course, and Professor entities with their relationships. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Student' with 'studentId', 'name', and 'email' attributes",
+        "The Umple source contains 'class Course' with 'courseId', 'title', and 'credits' attributes",
+        "The Umple source contains 'class Professor' with 'profId', 'name', and 'department' attributes",
+        "There is a many-to-many association between Student and Course",
+        "There is a one-to-many association between Professor and Course",
+        "Each class pair has at most one association defined",
+        "The API was called with language set to 'entityRelationshipDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Create a class diagram for a social network where a Person has a name. A Person can have many friends (reflexive many-to-many with role name 'friends'). A Person can also have one mentor who is also a Person (reflexive with role name 'mentor'). Make sure both reflexive associations compile correctly.",
+      "expected_output": "A class diagram SVG showing a Person class with two separate reflexive associations (friends and mentor). The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Person' with a 'name' attribute",
+        "The Umple source contains a reflexive many-to-many association with role name 'friends' (or using 'self friends')",
+        "The Umple source contains a second reflexive association with role name 'mentor'",
+        "Both reflexive associations use role names (required by Umple for reflexive associations)",
+        "The two reflexive associations are distinct and do not conflict with each other",
+        "The API was called with language set to 'classDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Create a trait diagram showing reusable traits applied to classes. Define a trait Timestamped with createdAt and updatedAt Date attributes. Define a trait Identifiable with a template parameter T that has an abstract method getId returning T. Create classes Order and Invoice that both use the Timestamped trait. Order should also use Identifiable with T = String.",
+      "expected_output": "A trait diagram SVG showing Timestamped and Identifiable traits applied to Order and Invoice classes. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'trait Timestamped' with 'createdAt' and 'updatedAt' attributes",
+        "The Umple source contains 'trait Identifiable' with a template parameter",
+        "The Umple source contains 'class Order' with 'isA Timestamped' and 'isA Identifiable'",
+        "The Umple source contains 'class Invoice' with 'isA Timestamped'",
+        "The API was called with language set to 'traitDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "Create an entity-relationship diagram for an e-commerce database. Entities: Customer (customerId, name, email), Product (productId, name, price), Order (orderId, orderDate, totalAmount). A Customer places many Orders (one-to-many). An Order contains many Products and a Product can appear in many Orders (many-to-many).",
+      "expected_output": "An ER diagram SVG showing Customer, Product, and Order entities with one-to-many and many-to-many relationships. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Customer' with 'customerId', 'name', and 'email' attributes",
+        "The Umple source contains 'class Product' with 'productId', 'name', and 'price' attributes",
+        "The Umple source contains 'class Order' with 'orderId', 'orderDate', and 'totalAmount' attributes",
+        "There is a one-to-many association between Customer and Order",
+        "There is a many-to-many association between Order and Product",
+        "Each class pair has at most one association defined",
+        "The API was called with language set to 'entityRelationshipDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "Create an entity-relationship diagram for a hospital database. Entities: Doctor (doctorId, name, specialty), Patient (patientId, name, dateOfBirth), Ward (wardId, name, capacity), Hospital (hospitalId, name). A Doctor treats many Patients (one-to-many). A Patient is assigned to one Ward. A Ward belongs to one Hospital (composition).",
+      "expected_output": "An ER diagram SVG showing Doctor, Patient, Ward, and Hospital entities with various relationship types including composition. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains 'class Doctor' with 'doctorId', 'name', and 'specialty' attributes",
+        "The Umple source contains 'class Patient' with 'patientId', 'name', and 'dateOfBirth' attributes",
+        "The Umple source contains 'class Ward' with 'wardId', 'name', and 'capacity' attributes",
+        "The Umple source contains 'class Hospital' with 'hospitalId' and 'name' attributes",
+        "There is a one-to-many association between Doctor and Patient",
+        "There is an association between Patient and Ward",
+        "There is a composition ('<@>-') between Hospital and Ward",
+        "Each class pair has at most one association defined",
+        "The API was called with language set to 'entityRelationshipDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Create a state machine diagram for a project task tracker. A task starts in Backlog, moves to InProgress when started, then to InReview when submitted. From InReview it can go back to InProgress if changes are requested, or move to the final Done state. Any state except Done can transition to Cancelled. Include entry actions: InProgress sets assignee, InReview notifies reviewer.",
+      "expected_output": "A state machine diagram SVG showing task lifecycle with entry actions, a back-transition, and multiple paths to Cancelled. The Umple code compiles without errors.",
+      "expectations": [
+        "The Umple source contains states for Backlog, InProgress, InReview, Done, and Cancelled",
+        "The state machine does not use 'Final' as a state name (reserved word in Umple)",
+        "There is a back-transition from InReview to InProgress",
+        "InProgress has an entry action",
+        "InReview has an entry action",
+        "Multiple states have transitions to Cancelled",
+        "The API was called with language set to 'stateDiagram' and languageStyle set to 'diagramUpdate'",
+        "The API response does not contain 'umple-message-error'",
+        "The output SVG file contains a 'viewBox' attribute"
+      ]
+    }
+  ]
+}

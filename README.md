@@ -2,38 +2,53 @@
   <img src="assets/umple_logo.svg" alt="Umple Logo" width="200">
 </div>
 
-# Skills
+# Umple Skills
 
-A collection of AI skills for working with Umple - a Model-Oriented Programming technology that allows you to create textual UML models, add UML constructs directly into your code (Java, Python, PHP, C++, Ruby), generate high-quality code from UML models, and visualize models as UML diagrams.
+AI skills for [Umple](https://www.umple.org) — a Model-Oriented Programming technology for textual UML modeling and code generation.
 
 ## Installation
 
 ```bash
-# Install via skills command (requires NPX)
 npx skills add umple/umple-skills
 ```
 
-## umple-diagram-generator
+## Skills
 
-This skill enables AI agents to generate UML diagrams (class diagrams, state machines, ER diagrams) from natural-language requirements using Umple's textual modeling format.
+### umple-diagram-generator
 
-Uses the Umple Online API — no local Umple CLI, Graphviz, or Bun installation needed.
+Generate UML diagrams from natural-language requirements.
 
-## What This Skill Does
+- Class diagrams, state machine diagrams, ER diagrams, trait diagrams
+- Outputs clean SVG via the Umple Online API
+- No local dependencies (no Umple CLI, Graphviz, or Bun)
 
-This skill helps AI agents convert textual requirements into visual UML diagrams by:
-1. Reading diagram-specific guidance from the `references/` folder
-2. Generating valid Umple code based on user requirements
-3. Using the Umple Online API to produce SVG diagrams
+### umple-code-generator
 
-## See Also
+Generate production-quality code from Umple models.
 
-- `SKILL.md` for detailed agent instructions
-- `references/` for domain-specific guidance
-- Other skills in the umple-skills repository
+- Java, Python, PHP, Ruby, C++, SQL
+- Complete class implementations with constructors, getters/setters, association management, state machine logic
+- One model, multiple language targets
+
+## Architecture
+
+Each skill is self-contained with two layers:
+
+```
+<skill>/
+├── SKILL.md         # Workflow — when and how to use the skill
+└── references/      # Knowledge — Umple syntax, API details, patterns
+```
+
+- **SKILL.md** orchestrates the workflow
+- **references/** provides domain knowledge — Umple syntax, API usage, generated code patterns
+
+Both skills use the [Umple Online API](https://cruise.umple.org/umpleonline/) via whatever HTTP tool is available in the agent's environment — no local tooling required.
+
+## Local development
 
 ```bash
-# Sync to agents directory
-./sync-skills.sh
+git clone https://github.com/umple/umple-skills.git
+cd umple-skills
+./sync-skills.sh    # Sync skills to ~/.agents/skills
 ```
-Use the script when you're managing local skills at ~/.agents (Recommended if you're using multiple harnesses)

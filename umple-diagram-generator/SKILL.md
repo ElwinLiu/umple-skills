@@ -1,79 +1,58 @@
 ---
 name: umple-diagram-generator
-description: "Generate diagrams (state machines, class diagrams, ER diagrams) from natural language requirements using Umple. Uses the Umple Online API — no local installs needed. Use when user requests: (1) State machine diagrams (2) UML class diagrams (3) ER diagrams (4) Diagram generation from text descriptions, (5) Any mention of Umple diagram generation, (6) Visual representation of states, transitions, events, classes, or relationships. Outputs SVG diagrams."
+description: "Generate diagrams (state machines, class diagrams, ER diagrams) from natural language requirements using Umple. Use when user requests: (1) State machine diagrams (2) UML class diagrams (3) ER diagrams, entity-relationship diagrams, or database schema diagrams (4) Diagram generation from text descriptions, (5) Any mention of Umple diagram generation, (6) Visual representation of states, transitions, events, entities, classes, or relationships. Outputs SVG diagrams with organized folder structure."
 ---
 
 # Umple Diagram Generator
 
-Generate an Umple `.ump` model from requirements and render it to SVG via the Umple Online API. No local dependencies required.
-
 ## Supported diagram types
 
-| Type             | API `language` value          | Read before writing Umple              |
-| ---------------- | ----------------------------- | -------------------------------------- |
-| State machine    | `stateDiagram`                | `references/state-machine-guidance.md` |
-| Class diagram    | `classDiagram`                | `references/class-diagram-guidance.md` |
-| Trait diagram    | `traitDiagram`                | `references/class-diagram-guidance.md` |
-| ER diagram       | `entityRelationshipDiagram`   | `references/class-diagram-guidance.md` |
+| Type          | `language` value              | Read first                               |
+| ------------- | ----------------------------- | ---------------------------------------- |
+| Class diagram | `classDiagram`                | `references/class-diagram-syntax.md`     |
+| State machine | `stateDiagram`                | `references/state-machine-syntax.md`     |
+| ER diagram    | `entityRelationshipDiagram`   | `references/class-diagram-syntax.md`     |
+| Trait diagram | `traitDiagram`                | `references/class-diagram-syntax.md`     |
 
 ## Workflow
 
-1. Read the relevant reference file for the diagram type (see table above).
-2. Clarify only what you must:
-   - State machine: initial state, events, transitions, guards/actions
-   - Class diagram: entities, attributes, relationships, multiplicities
-3. Write valid Umple code based on the guidance.
-4. Call the Umple Online API (see below) to compile and generate the diagram.
-5. Extract the SVG from the response.
-6. If compilation fails, read the error, fix the Umple code, and retry (up to 3 times).
-7. Render the SVG diagram inline for the user. Display it visually — do not just describe it.
+1. Read the syntax reference for the requested diagram type.
+2. Write valid Umple code.
+3. Call the Umple Online API (see below).
+4. Extract SVG from the response and save to a `.svg` file.
+5. On error, read the message, fix the code, retry (up to 3 times).
+6. Render the SVG inline for the user.
 
-## Umple Online API
+## API
 
-### Endpoint
+**Endpoint:** `POST https://cruise.umple.org/umpleonline/scripts/compiler.php`
+**Content-Type:** `application/x-www-form-urlencoded`
 
-```
-POST https://cruise.umple.org/umpleonline/scripts/compiler.php
-Content-Type: application/x-www-form-urlencoded
-```
+| Parameter       | Value                                                          |
+| --------------- | -------------------------------------------------------------- |
+| `language`      | See table above                                                |
+| `languageStyle` | `diagramUpdate`                                                |
+| `umpleCode`     | The Umple source code                                          |
+| `filename`      | `model.ump`                                                    |
 
-### Parameters (form-encoded body)
+Use whatever HTTP tool is available (WebFetch, curl, fetch, etc.).
 
-| Parameter       | Value                                                                              |
-| --------------- | ---------------------------------------------------------------------------------- |
-| `language`      | One of: `classDiagram`, `stateDiagram`, `traitDiagram`, `entityRelationshipDiagram` |
-| `languageStyle` | `diagramUpdate`                                                                     |
-| `error`         | `true`                                                                              |
-| `umpleCode`     | The Umple source code                                                               |
-| `filename`      | `model.ump`                                                                         |
+### Response parsing
 
-### Example
+**Success:** response contains two nested `<svg>` tags. Extract the **inner** SVG — the one with a `viewBox` attribute. Clean up any `xlink:href="javascript:..."` attributes.
 
-To generate a class diagram for `class Student { String name; Integer id; }`:
+**Error:** response contains `<span class="umple-message-error">`. Strip HTML tags to read the error.
 
-```
-POST https://cruise.umple.org/umpleonline/scripts/compiler.php
+## Output
 
-language=classDiagram&languageStyle=diagramUpdate&error=true&umpleCode=class+Student+%7B+String+name%3B+Integer+id%3B+%7D&filename=model.ump
-```
-
-### Response handling
-
-The API returns HTML containing an embedded SVG diagram.
-
-1. **Check for errors**: If the response contains `<p>URL_SPLIT`, everything before that marker may contain warnings/errors. Strip HTML tags to read them.
-2. **Extract SVG**: Find the `<svg ... viewBox="...">...</svg>` block in the response. This is the diagram.
-3. **Clean up**: Remove any `transform="scale(...) rotate(0)"` attributes, replacing with just `transform="rotate(0)"` for proper rendering.
-4. **Error case**: If no `<svg` tag is found, the compilation failed. The response text (with HTML stripped) contains the error message.
-
-## Output contract
-
-1. State the diagram type generated.
-2. Show the Umple source code in an `umple` code block.
-3. Render the SVG diagram visually for the user.
+1. State the diagram type.
+2. Show the Umple source in an `umple` code block.
+3. Render the SVG visually.
+4. Save files: `<name>/model.ump` and `<name>/diagram.svg`.
 
 ## Guardrails
 
-- Prefer a smaller valid Umple model over guessing syntax.
-- Always read the reference file before writing Umple code.
-- Keep actions/guards minimal (no secrets, no I/O).
+- Always read the syntax reference before writing Umple code.
+- Prefer a smaller valid model over guessing syntax.
+- One association per class pair — never define the same relationship from both sides.
+- Never use `Final` as a custom state name — it is a reserved keyword in Umple. Use `Done`, `Completed`, etc. instead.
