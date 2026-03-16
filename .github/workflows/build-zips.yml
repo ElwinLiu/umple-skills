@@ -1,0 +1,21 @@
+name: Build skill zips
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build zips
+        run: bash build-zips.sh
+
+      - name: Upload zips to release
+        run: gh release upload "${{ github.event.release.tag_name }}" dist/*.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
